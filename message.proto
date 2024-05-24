@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+package greet;
+
+message SendMessageRequest {
+	string the_message = 1;
+}
+
+message ReturnMessageResponse {
+	string the_return = 1;
+}
+
+message StartInterptingRequest {
+	bool enable = 1;
+}
+
+message MessageInterceptedResponse {
+	string the_intercepted_message = 1;
+}
+
+message ConnectionMangerRequest {
+	bool enable = 1;
+}
+
+message ConnectionMangerResponse {
+	bool enable = 1;
+}
+
+
+service MessageService {
+	rpc MessageCommunicator (SendMessageRequest) returns (ReturnMessageResponse) {}
+	rpc MessageInterceptor (StartInterptingRequest) returns (stream MessageInterceptedResponse) {}
+	rpc ConnectionManager (ConnectionMangerRequest) returns (stream ConnectionMangerResponse) {}
+}
