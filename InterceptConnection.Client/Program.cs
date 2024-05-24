@@ -1,7 +1,7 @@
 ﻿using Greet;
 using Grpc.Core;
 
-Console.WriteLine("Client");
+
 
 Channel channel = new Channel("localhost", 50052, ChannelCredentials.Insecure);// channelCredentials);
 
@@ -18,6 +18,10 @@ try
 
     while (true)
     {
+        Console.Clear();
+
+        Console.WriteLine("Client");
+
         Console.WriteLine("Write a message:");
         var message = Console.ReadLine();
 
@@ -25,18 +29,14 @@ try
 
         var response = client.MessageCommunicator(request);
 
+
+        Console.WriteLine("New Message Received:");
         Console.WriteLine(response.TheReturn);
 
-        //while (await response.ResponseStream.MoveNext())
-        //{
-        //    Console.WriteLine(response.ResponseStream.Current.Result);
-        //    await Task.Delay(200);
-        //}
+        Console.ReadKey();
     }
 }
 finally
 {
-
     channel.ShutdownAsync().Wait();
-    
 }

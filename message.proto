@@ -14,15 +14,23 @@ message StartInterptingRequest {
 	bool enable = 1;
 }
 
+message InjectorMessageRequest {
+	string injected_message = 1;
+}
+
+message InjectorMessageResponse {
+	bool confirmation = 1;
+}
+
 message MessageInterceptedResponse {
 	string the_intercepted_message = 1;
 }
 
-message ConnectionMangerRequest {
+message ConnectionManagerRequest {
 	bool enable = 1;
 }
 
-message ConnectionMangerResponse {
+message ConnectionManagerResponse {
 	bool enable = 1;
 }
 
@@ -30,5 +38,6 @@ message ConnectionMangerResponse {
 service MessageService {
 	rpc MessageCommunicator (SendMessageRequest) returns (ReturnMessageResponse) {}
 	rpc MessageInterceptor (StartInterptingRequest) returns (stream MessageInterceptedResponse) {}
-	rpc ConnectionManager (ConnectionMangerRequest) returns (stream ConnectionMangerResponse) {}
+	rpc MessageInjector (InjectorMessageRequest) returns (InjectorMessageResponse) {}
+	rpc ConnectionManager (ConnectionManagerRequest) returns (ConnectionManagerResponse) {}
 }

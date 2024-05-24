@@ -54,9 +54,13 @@ namespace Greet {
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
     static readonly grpc::Marshaller<global::Greet.MessageInterceptedResponse> __Marshaller_greet_MessageInterceptedResponse = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Greet.MessageInterceptedResponse.Parser));
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-    static readonly grpc::Marshaller<global::Greet.ConnectionMangerRequest> __Marshaller_greet_ConnectionMangerRequest = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Greet.ConnectionMangerRequest.Parser));
+    static readonly grpc::Marshaller<global::Greet.InjectorMessageRequest> __Marshaller_greet_InjectorMessageRequest = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Greet.InjectorMessageRequest.Parser));
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-    static readonly grpc::Marshaller<global::Greet.ConnectionMangerResponse> __Marshaller_greet_ConnectionMangerResponse = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Greet.ConnectionMangerResponse.Parser));
+    static readonly grpc::Marshaller<global::Greet.InjectorMessageResponse> __Marshaller_greet_InjectorMessageResponse = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Greet.InjectorMessageResponse.Parser));
+    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+    static readonly grpc::Marshaller<global::Greet.ConnectionManagerRequest> __Marshaller_greet_ConnectionManagerRequest = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Greet.ConnectionManagerRequest.Parser));
+    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+    static readonly grpc::Marshaller<global::Greet.ConnectionManagerResponse> __Marshaller_greet_ConnectionManagerResponse = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Greet.ConnectionManagerResponse.Parser));
 
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
     static readonly grpc::Method<global::Greet.SendMessageRequest, global::Greet.ReturnMessageResponse> __Method_MessageCommunicator = new grpc::Method<global::Greet.SendMessageRequest, global::Greet.ReturnMessageResponse>(
@@ -75,12 +79,20 @@ namespace Greet {
         __Marshaller_greet_MessageInterceptedResponse);
 
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-    static readonly grpc::Method<global::Greet.ConnectionMangerRequest, global::Greet.ConnectionMangerResponse> __Method_ConnectionManager = new grpc::Method<global::Greet.ConnectionMangerRequest, global::Greet.ConnectionMangerResponse>(
-        grpc::MethodType.ServerStreaming,
+    static readonly grpc::Method<global::Greet.InjectorMessageRequest, global::Greet.InjectorMessageResponse> __Method_MessageInjector = new grpc::Method<global::Greet.InjectorMessageRequest, global::Greet.InjectorMessageResponse>(
+        grpc::MethodType.Unary,
+        __ServiceName,
+        "MessageInjector",
+        __Marshaller_greet_InjectorMessageRequest,
+        __Marshaller_greet_InjectorMessageResponse);
+
+    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+    static readonly grpc::Method<global::Greet.ConnectionManagerRequest, global::Greet.ConnectionManagerResponse> __Method_ConnectionManager = new grpc::Method<global::Greet.ConnectionManagerRequest, global::Greet.ConnectionManagerResponse>(
+        grpc::MethodType.Unary,
         __ServiceName,
         "ConnectionManager",
-        __Marshaller_greet_ConnectionMangerRequest,
-        __Marshaller_greet_ConnectionMangerResponse);
+        __Marshaller_greet_ConnectionManagerRequest,
+        __Marshaller_greet_ConnectionManagerResponse);
 
     /// <summary>Service descriptor</summary>
     public static global::Google.Protobuf.Reflection.ServiceDescriptor Descriptor
@@ -105,7 +117,13 @@ namespace Greet {
       }
 
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual global::System.Threading.Tasks.Task ConnectionManager(global::Greet.ConnectionMangerRequest request, grpc::IServerStreamWriter<global::Greet.ConnectionMangerResponse> responseStream, grpc::ServerCallContext context)
+      public virtual global::System.Threading.Tasks.Task<global::Greet.InjectorMessageResponse> MessageInjector(global::Greet.InjectorMessageRequest request, grpc::ServerCallContext context)
+      {
+        throw new grpc::RpcException(new grpc::Status(grpc::StatusCode.Unimplemented, ""));
+      }
+
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::System.Threading.Tasks.Task<global::Greet.ConnectionManagerResponse> ConnectionManager(global::Greet.ConnectionManagerRequest request, grpc::ServerCallContext context)
       {
         throw new grpc::RpcException(new grpc::Status(grpc::StatusCode.Unimplemented, ""));
       }
@@ -170,14 +188,44 @@ namespace Greet {
         return CallInvoker.AsyncServerStreamingCall(__Method_MessageInterceptor, null, options, request);
       }
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual grpc::AsyncServerStreamingCall<global::Greet.ConnectionMangerResponse> ConnectionManager(global::Greet.ConnectionMangerRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      public virtual global::Greet.InjectorMessageResponse MessageInjector(global::Greet.InjectorMessageRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      {
+        return MessageInjector(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::Greet.InjectorMessageResponse MessageInjector(global::Greet.InjectorMessageRequest request, grpc::CallOptions options)
+      {
+        return CallInvoker.BlockingUnaryCall(__Method_MessageInjector, null, options, request);
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual grpc::AsyncUnaryCall<global::Greet.InjectorMessageResponse> MessageInjectorAsync(global::Greet.InjectorMessageRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      {
+        return MessageInjectorAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual grpc::AsyncUnaryCall<global::Greet.InjectorMessageResponse> MessageInjectorAsync(global::Greet.InjectorMessageRequest request, grpc::CallOptions options)
+      {
+        return CallInvoker.AsyncUnaryCall(__Method_MessageInjector, null, options, request);
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::Greet.ConnectionManagerResponse ConnectionManager(global::Greet.ConnectionManagerRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
       {
         return ConnectionManager(request, new grpc::CallOptions(headers, deadline, cancellationToken));
       }
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual grpc::AsyncServerStreamingCall<global::Greet.ConnectionMangerResponse> ConnectionManager(global::Greet.ConnectionMangerRequest request, grpc::CallOptions options)
+      public virtual global::Greet.ConnectionManagerResponse ConnectionManager(global::Greet.ConnectionManagerRequest request, grpc::CallOptions options)
       {
-        return CallInvoker.AsyncServerStreamingCall(__Method_ConnectionManager, null, options, request);
+        return CallInvoker.BlockingUnaryCall(__Method_ConnectionManager, null, options, request);
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual grpc::AsyncUnaryCall<global::Greet.ConnectionManagerResponse> ConnectionManagerAsync(global::Greet.ConnectionManagerRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      {
+        return ConnectionManagerAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual grpc::AsyncUnaryCall<global::Greet.ConnectionManagerResponse> ConnectionManagerAsync(global::Greet.ConnectionManagerRequest request, grpc::CallOptions options)
+      {
+        return CallInvoker.AsyncUnaryCall(__Method_ConnectionManager, null, options, request);
       }
       /// <summary>Creates a new instance of client from given <c>ClientBaseConfiguration</c>.</summary>
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
@@ -195,6 +243,7 @@ namespace Greet {
       return grpc::ServerServiceDefinition.CreateBuilder()
           .AddMethod(__Method_MessageCommunicator, serviceImpl.MessageCommunicator)
           .AddMethod(__Method_MessageInterceptor, serviceImpl.MessageInterceptor)
+          .AddMethod(__Method_MessageInjector, serviceImpl.MessageInjector)
           .AddMethod(__Method_ConnectionManager, serviceImpl.ConnectionManager).Build();
     }
 
@@ -207,7 +256,8 @@ namespace Greet {
     {
       serviceBinder.AddMethod(__Method_MessageCommunicator, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Greet.SendMessageRequest, global::Greet.ReturnMessageResponse>(serviceImpl.MessageCommunicator));
       serviceBinder.AddMethod(__Method_MessageInterceptor, serviceImpl == null ? null : new grpc::ServerStreamingServerMethod<global::Greet.StartInterptingRequest, global::Greet.MessageInterceptedResponse>(serviceImpl.MessageInterceptor));
-      serviceBinder.AddMethod(__Method_ConnectionManager, serviceImpl == null ? null : new grpc::ServerStreamingServerMethod<global::Greet.ConnectionMangerRequest, global::Greet.ConnectionMangerResponse>(serviceImpl.ConnectionManager));
+      serviceBinder.AddMethod(__Method_MessageInjector, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Greet.InjectorMessageRequest, global::Greet.InjectorMessageResponse>(serviceImpl.MessageInjector));
+      serviceBinder.AddMethod(__Method_ConnectionManager, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Greet.ConnectionManagerRequest, global::Greet.ConnectionManagerResponse>(serviceImpl.ConnectionManager));
     }
 
   }
