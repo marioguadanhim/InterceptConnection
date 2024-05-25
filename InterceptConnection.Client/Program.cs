@@ -18,22 +18,32 @@ try
 
     while (true)
     {
-        Console.Clear();
+        try
+        {
 
-        Console.WriteLine("Client");
+            Console.Clear();
 
-        Console.WriteLine("Write a message:");
-        var message = Console.ReadLine();
+            Console.WriteLine("Client");
 
-        var request = new SendMessageRequest() { TheMessage = message };
+            Console.WriteLine("Write a message:");
+            var message = Console.ReadLine();
 
-        var response = client.MessageCommunicator(request);
+            var request = new SendMessageRequest() { TheMessage = message };
+
+            DateTime deadline = DateTime.UtcNow.AddSeconds(30);
+            var response = client.MessageCommunicator(request, deadline: deadline);
 
 
-        Console.WriteLine("New Message Received:");
-        Console.WriteLine(response.TheReturn);
+            Console.WriteLine("New Message Received:");
+            Console.WriteLine(response.TheReturn);
 
-        Console.ReadKey();
+            Console.ReadKey();
+        }
+        catch(Exception ex)
+        {
+            Console.WriteLine(ex.ToString());
+            Console.ReadKey();
+        }
     }
 }
 finally

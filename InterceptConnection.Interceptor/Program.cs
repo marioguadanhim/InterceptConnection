@@ -1,76 +1,104 @@
-﻿using Greet;
+﻿using System;
+using System.Threading.Tasks;
+using Greet;
 using Grpc.Core;
 
-
-
-Channel channel = new Channel("localhost", 50052, ChannelCredentials.Insecure);// channelCredentials);
-
-await channel.ConnectAsync().ContinueWith((task) =>
+namespace client
 {
-    if (task.Status == TaskStatus.RanToCompletion)
-        Console.WriteLine("The client connected successfully");
-});
-
-var client = new MessageService.MessageServiceClient(channel);
-
-try
-{
-    string newMessage = string.Empty;
-    while (newMessage != "exit")
+    class Program
     {
-        Console.Clear();
+        public static string CurrentMessage { get; set; } = string.Empty;
 
-        Console.WriteLine("Interceptor");
+        static async Task Main(string[] args)
+        {
+            while (true)
+            {
 
-        await EnableConnection(client, true);
+                Channel channel = new Channel("localhost", 50052, ChannelCredentials.Insecure);
 
-        var request = new StartInterptingRequest() { Enable = true };
+                await channel.ConnectAsync().ContinueWith((task) =>
+                {
+                    if (task.Status == TaskStatus.RanToCompletion)
+                        Console.WriteLine("The client connected successfully");
+                    else
+                        Console.WriteLine("Failed to connect");
+                });
 
-        string messageIntercepted = await InterceptMessage(client, request);
+                var client = new MessageService.MessageServiceClient(channel);
 
-        Console.WriteLine("Message Intercepted: " + messageIntercepted);
-        Console.WriteLine("Modify the intercepted message:");
-        newMessage = Console.ReadLine();
+                try
+                {
+                    string newMessage = string.Empty;
+                    while (newMessage != "exit")
+                    {
+                        try
+                        {
+                            Console.Clear();
 
-        await SendTheInterceptMessageBackToServer(client, messageIntercepted, newMessage);
+                            Console.WriteLine("Interceptor");
+
+                            await EnableConnection(client, true);
+
+                            var request = new StartInterptingRequest() { Enable = true };
+
+                            await InterceptMessage(client, request);
+
+                            Console.WriteLine("Message Intercepted: " + CurrentMessage);
+                            Console.WriteLine("Modify the intercepted message:");
+                            newMessage = Console.ReadLine();
+
+                            await SendTheInterceptMessageBackToServer(client, newMessage);
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex.ToString());
+                            Console.ReadKey();
+                        }
+                    }
+                }
+                finally
+                {
+                    await EnableConnection(client, false);
+                    await channel.ShutdownAsync();
+                }
+
+                Console.WriteLine("Interceptor OFF...");
+                Console.WriteLine("Press any key to start again...");
+                Console.ReadKey();
+            }
+        }
+
+        static async Task EnableConnection(MessageService.MessageServiceClient client, bool enable)
+        {
+            var connectionManagerRequest = new ConnectionManagerRequest { Enable = enable };
+
+            DateTime deadline = DateTime.UtcNow.AddSeconds(30);
+            await client.ConnectionManagerAsync(connectionManagerRequest, deadline: deadline);
+        }
+
+        static async Task InterceptMessage(MessageService.MessageServiceClient client, StartInterptingRequest request)
+        {
+            DateTime deadline = DateTime.UtcNow.AddSeconds(30);
+            using var response = client.MessageInterceptor(request, deadline: deadline);
+
+            string message = string.Empty;
+            while ((string.IsNullOrEmpty(message) || message == CurrentMessage) && await response.ResponseStream.MoveNext())
+            {
+                message = response.ResponseStream.Current.TheInterceptedMessage;
+                Console.WriteLine(response.ResponseStream.Current.TheInterceptedMessage);
+            }
+            CurrentMessage = message;
+        }
+
+        static async Task SendTheInterceptMessageBackToServer(MessageService.MessageServiceClient client, string newMessage)
+        {
+            var injectorMessageRequest = new InjectorMessageRequest
+            {
+                InjectedMessage = !string.IsNullOrEmpty(newMessage) ? newMessage : CurrentMessage
+            };
+
+            DateTime deadline = DateTime.UtcNow.AddSeconds(30);
+            await client.MessageInjectorAsync(injectorMessageRequest, deadline: deadline);
+        }
     }
-
-    Console.WriteLine("Interceptor OFF");
-}
-finally
-{
-    await EnableConnection(client, false);
-    channel.ShutdownAsync().Wait();
-}
-
-
-
-static async Task EnableConnection(MessageService.MessageServiceClient client, bool enable)
-{
-    ConnectionManagerRequest connectionManagerRequest = new ConnectionManagerRequest();
-    connectionManagerRequest.Enable = true;
-
-    await client.ConnectionManagerAsync(connectionManagerRequest);
-}
-
-static async Task<string> InterceptMessage(MessageService.MessageServiceClient client, StartInterptingRequest request)
-{
-    var response = client.MessageInterceptor(request);
-    string message = string.Empty;
-
-    while (string.IsNullOrEmpty(message) && await response.ResponseStream.MoveNext())
-    {
-        message = response.ResponseStream.Current.TheInterceptedMessage;      
-        Console.WriteLine(response.ResponseStream.Current.TheInterceptedMessage);
-    }
-
-    return message;
-}
-
-static async Task SendTheInterceptMessageBackToServer(MessageService.MessageServiceClient client, string messageIntercepted, string? newMessage)
-{
-    InjectorMessageRequest injectorMessageRequest = new InjectorMessageRequest();
-    injectorMessageRequest.InjectedMessage = !string.IsNullOrEmpty(newMessage) ? newMessage : messageIntercepted;
-
-    await client.MessageInjectorAsync(injectorMessageRequest);
 }

@@ -24,14 +24,12 @@ namespace InterceptConnection.Server
         }
 
         public override async Task<ReturnMessageResponse> MessageCommunicator(SendMessageRequest request, ServerCallContext context)
-        {
-            Console.WriteLine("The server received the request : ");
-            Console.WriteLine(request.TheMessage);
-
+        {       
             string result = request.TheMessage;
 
             if (TheUltimateEventManager.Enabled)
             {
+                Console.WriteLine($"Enqueue: {request.TheMessage}");
                 TheUltimateEventManager.messagesIn.Enqueue(result);
                 bool hasMessageArrived = false;
                 while (!hasMessageArrived)
@@ -39,6 +37,10 @@ namespace InterceptConnection.Server
                     hasMessageArrived = TheUltimateEventManager.messagesOut.TryDequeue(out result!);
                     await Task.Delay(500);
                 }
+            }
+            else
+            {
+                Console.WriteLine($"QA Tool not connected, received: {request.TheMessage}");
             }
 
             var resultobjectresponse = new ReturnMessageResponse();
@@ -48,16 +50,20 @@ namespace InterceptConnection.Server
 
         public override async Task MessageInterceptor(StartInterptingRequest request, IServerStreamWriter<MessageInterceptedResponse> responseStream, ServerCallContext context)
         {
+            string? previousResult = null;
             while (TheUltimateEventManager.Enabled)
             {
-                string resultToBeModified = null;
-                var isNewMessage = TheUltimateEventManager.messagesIn.TryDequeue(out resultToBeModified);
-                if (isNewMessage)
-                {
-                    await responseStream.WriteAsync(new MessageInterceptedResponse() { TheInterceptedMessage = resultToBeModified });
-                }
+                await Task.Delay(500);
+                string? resultToBeModified = null;
+                TheUltimateEventManager.messagesIn.TryDequeue(out resultToBeModified);
+                if (!string.IsNullOrEmpty(resultToBeModified))
+                    previousResult = resultToBeModified;
 
-                await Task.Delay(2000);
+                if (!string.IsNullOrEmpty(previousResult))
+                {
+                    Console.WriteLine($"Dequeue: {previousResult}");
+                    await responseStream.WriteAsync(new MessageInterceptedResponse() { TheInterceptedMessage = previousResult });
+                }
             }
         }
 
